@@ -1,0 +1,33 @@
+<apex:page >
+
+    <script type="text/javascript" src="https://cdn.goinstant.net/v1/platform.min.js"></script>
+    <script>
+        
+        var url = 'https://goinstant.net/799172ecde56/my-application';
+        var connect = goinstant.connect(url);
+        
+        var messagesKey;
+        connect.then(function(result){
+            var room = result.rooms[0];
+            messagesKey = room.key('messages');
+            return messagesKey.get();
+        });
+        
+        var messages = result.value;
+        var ordered = _.keys(messages).sort();
+        _.each(ordered, function(id) {
+            addMessage(messages[id]);
+        });
+        
+        $('.text').on('keydown', handleMessage);
+        var options = {
+            local: true
+        };
+        
+        messagesKey.on('add', options, addMessage);
+        
+    </script>
+    <apex:form >
+        <apex:inputTextarea styleClass="text"/>
+    </apex:form>
+</apex:page>

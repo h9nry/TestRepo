@@ -1,0 +1,13 @@
+<apex:page controller="TestController">
+    <apex:form >
+    <apex:pageBlock >
+        <apex:dynamicComponent componentValue="{!contactPageBlockSection}" />
+        <apex:outputPanel id="theTabel">
+            <apex:actionStatus id="theStatus" startText="rendering..."/>
+            <apex:pageBlockTable value="{!selValues}" var="vals">
+                <apex:column headerValue="Value" value="{!vals}"/>
+            </apex:pageBlockTable>
+        </apex:outputPanel>
+    </apex:pageBlock>
+    </apex:form>
+</apex:page>

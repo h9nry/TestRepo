@@ -1,0 +1,9 @@
+<apex:page showHeader="false" sidebar="false" standardStylesheets="false">
+    <html>
+        <head>
+        </head>
+        <body>
+            hey {!$User.FirstName} completely new page
+        </body>
+    </html>
+</apex:page>

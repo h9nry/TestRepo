@@ -1,0 +1,15 @@
+<apex:page showHeader="true" sidebar="true" controller="ZAPDemoCtrl">
+	<apex:sectionHeader title="MyHeaderTitle" subtitle="MyHeaderSubTitle" />
+	<apex:form >
+		<apex:pageBlock id="theBlock" title="MyPageBlockTitle">
+			<apex:pageMessages />
+			<apex:pageBlockButtons location="top">
+				<apex:commandButton value="Hit me!" reRender="theBlock"/>
+			</apex:pageBlockButtons>
+			<apex:pageBlockSection title="MyPageBlockSectionTitle">
+					<apex:inputText value="{!myEvilVar}"/>
+			</apex:pageBlockSection>
+			<span>Say </span> <apex:outputText value="{!myEvilVar}" escape="false"/>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

@@ -1,0 +1,3 @@
+<apex:page >
+    {!$ObjectType.Account}
+</apex:page>

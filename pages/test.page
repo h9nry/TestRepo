@@ -1,0 +1,11 @@
+<apex:page contentType="text/xml" cache="false" showHeader="false" sidebar="false">
+    <root>
+        There is no reason for a nested apex:outputpanel to generate a span tag like this:  
+
+        <apex:outputPanel layout="none" rendered="true">
+            <apex:outputPanel layout="none" rendered="false" />
+        </apex:outputPanel>
+
+        This breaks strict xml documents like XSL-FO.
+    </root>        
+</apex:page>

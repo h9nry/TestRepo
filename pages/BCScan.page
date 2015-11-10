@@ -1,0 +1,231 @@
+<apex:page docType="html-5.0" controller="ProductService" sidebar="false" showHeader="false" standardStylesheets="false" cache="true">
+	
+	<style type="text/css">
+
+		body { padding-top: 90px; }
+
+	</style>
+
+	<!-- cordova -->
+	<apex:includeScript value="{!URLFOR($Resource.cordova, 'cordova.js')}"/>
+
+	<!-- bootstrap css -->
+	<apex:stylesheet value="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"/>
+	<apex:stylesheet value="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css"/>
+
+	<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"/>
+	<apex:includeScript value="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"/>
+
+	<!-- navbar -->
+	<nav style="padding-top: 20px;" class="navbar navbar-default navbar-fixed-top">
+
+		<div class="container-fluid">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">
+					DEV501
+				</a>
+			</div>
+
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
+					<li><a href="#">Link</a></li>
+					<li class="dropdown" dropdown="">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="#">Action</a></li>
+							<li><a href="#">Another action</a></li>
+							<li><a href="#">Something else here</a></li>
+							<li class="divider"></li>
+							<li><a href="#">Separated link</a></li>
+							<li class="divider"></li>
+							<li><a href="#">One more separated link</a></li>
+						</ul>
+					</li>
+				</ul>
+				<form class="navbar-form navbar-left" role="search">
+					<div class="form-group">
+					<input type="text" class="form-control" placeholder="Search"/>
+					</div>
+					<button type="submit" class="btn btn-default">Submit</button>
+				</form>
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="#">Link</a></li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="#">Action</a></li>
+							<li><a href="#">Another action</a></li>
+							<li><a href="#">Something else here</a></li>
+							<li class="divider"></li>
+							<li><a href="#">Separated link</a></li>
+						</ul>
+					</li>
+				</ul>
+			</div><!-- /.navbar-collapse -->
+		</div><!-- /.container-fluid -->
+	</nav>
+
+	<div id="scan" class="container-fluid">
+
+		<div class="row">
+			<div class="col-md-12 text-center">
+				<button id="startScan" type="button" class="btn btn-lg btn-primary" data-loading-text="Starting...">
+					<span class="glyphicon glyphicon-barcode" aria-hidden="true"/> Start Scan
+				</button>
+			</div>
+		</div>
+		<div class="row" style="margin-top: 30px;">
+			<div class="col-md-12 text-center">
+				<p>Hit the button, place the barcode (red line) or QR code (green square) within the marker and hold device steady.</p>
+			</div>
+		</div>
+		<div id="msgPanel">
+			<div class="panel-body" id="msg">
+			</div>
+		</div>
+	</div>
+	
+	<div id="results" class="container-fluid">
+		
+		<div class="row">
+			<div class="form-group">
+				<label class="col-md-2 control-label">Product Name</label>
+				<div class="col-md-10" id="prdName">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="form-group">
+				<label class="col-md-2 control-label">Product Group</label>
+				<div class="col-md-10" id="prdGroup">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="form-group">
+				<label class="col-md-2 control-label">Product Code</label>
+				<div class="col-md-10" id="prdCode">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="form-group">
+				<label class="col-md-2 control-label">Product Description</label>
+				<div class="col-md-10" id="prdDescription">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div style="padding-left: 10px; padding-bottom: 20px;">
+				<button type="button" class="btn btn-primary" onclick="alert('Not yet implemented');">
+					<span class="glyphicon glyphicon-briefcase" aria-hidden="true"/> Add Case
+				</button>
+				<button type="button" class="btn btn-default" onclick="startScan();">
+					<span class="glyphicon glyphicon-barcode" aria-hidden="true"/> Scan
+				</button>
+				<button type="button" class="btn btn-default" onclick="switchToScan();">Cancel</button>
+			</div>
+		</div>
+
+	</div>
+	
+	<script type="text/javascript">
+
+		var scanResult;
+
+		$('#results').hide();
+		document.addEventListener("deviceready", init, false);
+		
+		function init() {
+			
+			document.querySelector("#startScan").addEventListener("touchend", startScan, false);
+
+		}
+
+		function startScan() {
+
+			resetMsgPanel();
+
+			$('#startScan').button('loading');
+			
+			cordova.plugins.barcodeScanner.scan(
+				function (result) {
+					scanResult = result;
+
+					$('#startScan').button('reset');
+					
+					//var s = "Result: " + result.text + "<br/>" +
+					//"Format: " + result.format + "<br/>" +
+					//"Cancelled: " + result.cancelled;
+					//resultDiv.innerHTML = s;
+					
+					if(result.cancelled != 1){
+						try {
+							h9nry.ProductService.queryByCode(
+								result.text,
+								handleProductResult
+							);
+						} catch(e) {
+							$('#msgPanel').addClass('panel panel-warning');
+							$('#msg').text('Scanning failed, please try again or make sure a valid code is scanned.');
+							$('#msgPanel').show();
+						}
+					}
+
+				},
+				function (error) {
+					$('#msgPanel').addClass('panel panel-warning');
+					$('#msg').text('Scanning failed, please try again or make sure a valid code is scanned.');
+					$('#msgPanel').show();
+				}
+			);
+
+		}
+
+		function handleProductResult(result){
+			if(result != null){
+				$('#scan').hide();
+				
+				// set text values
+				$('#prdName').text(result.name);
+				$('#prdGroup').text(result.grp);
+				$('#prdCode').text(result.code);
+				$('#prdDescription').text(result.description);
+
+				$('#results').show();
+			} else {
+				$('#msgPanel').addClass('panel panel-primary');
+				$('#msg').text('No product found for the scanned code: ' + scanResult.text);
+				$('#msgPanel').show();
+			}
+		}
+
+		function switchToScan(){
+			$('#results').hide();
+			$('#scan').show();
+		}
+
+		function resetMsgPanel(){
+			$('#msgPanel').removeClass();
+			$('#msg').text('');
+			$('#msgPanel').hide();
+		}
+
+	</script>
+	
+	
+
+</apex:page>
